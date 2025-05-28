@@ -1,0 +1,74 @@
+﻿<Window x:Class="HotelBooking.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:HotelBooking.ViewModels"
+        Title="Бронирование гостиницы" Height="600" Width="900">
+
+    <Window.DataContext>
+        <vm:BookingViewModel/>
+    </Window.DataContext>
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Margin="10" VerticalAlignment="Top">
+            <TextBlock Text="ФИО клиента:"/>
+            <TextBox Text="{Binding NewBooking.FullName, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Text="Тип номера:" Margin="0,10,0,0"/>
+            <ComboBox
+                ItemsSource="{Binding RoomTypes}"
+                SelectedItem="{Binding NewBooking.RoomType, UpdateSourceTrigger=PropertyChanged}"/>
+
+            <TextBlock Text="Дата заезда:" Margin="0,10,0,0"/>
+            <DatePicker SelectedDate="{Binding NewBooking.CheckInDate}"/>
+
+            <TextBlock Text="Дата выезда:" Margin="0,10,0,0"/>
+            <DatePicker SelectedDate="{Binding NewBooking.CheckOutDate}"/>
+
+            <Button Content="Загрузить изображение"
+                    Command="{Binding LoadImageCommand}"
+                    Margin="0,10,0,0"/>
+
+            <Button Content="Забронировать"
+                    Command="{Binding BookCommand}"
+                    Margin="0,5,0,0"/>
+        </StackPanel>
+
+        <Grid Grid.Column="1" Margin="10,0,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="3*"/>
+                <RowDefinition Height="2*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <DataGrid ItemsSource="{Binding Bookings}"
+                      SelectedItem="{Binding SelectedBooking}"
+                      AutoGenerateColumns="False"
+                      CanUserAddRows="False"
+                      Margin="0,0,0,5">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ФИО"    Binding="{Binding FullName}"/>
+                    <DataGridTextColumn Header="Тип"    Binding="{Binding RoomType}"/>
+                    <DataGridTextColumn Header="Заезд"  Binding="{Binding CheckInDate, StringFormat=d}"/>
+                    <DataGridTextColumn Header="Выезд"  Binding="{Binding CheckOutDate, StringFormat=d}"/>
+                    <DataGridTextColumn Header="Сумма"  Binding="{Binding TotalPrice}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Border Grid.Row="1" BorderBrush="Gray" BorderThickness="1" Margin="0,0,0,10">
+                <Image Source="{Binding SelectedBooking.ImagePath, Converter={StaticResource ImgConverter}}"
+                       Stretch="Uniform"/>
+            </Border>
+
+            <Button Grid.Row="2"
+                    Content="Удалить выбранное бронирование"
+                    Command="{Binding DeleteCommand}"
+                    Margin="0,5,0,0"
+                    HorizontalAlignment="Left"/>
+        </Grid>
+    </Grid>
+</Window>
